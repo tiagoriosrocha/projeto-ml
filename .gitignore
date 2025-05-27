@@ -1,0 +1,9 @@
+# Arquivos e diretórios específicos do sistema operacional e do editor
+.DS_Store
+.idea/
+
+# Arquivos de checkpoint do Jupyter Notebook
+.ipynb_checkpoints/
+
+# Diretório de informações do CatBoost
+catboost_info/
