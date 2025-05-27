@@ -22,8 +22,8 @@ contracts using genetic algorithm and generating benchmark dataset.pdf`: Documen
 *   `3_svm_reducao_giny.ipynb`: Notebook com uso de SVM com redução de dimensionalidade usando Gini.
 *   `4_decisiontree_randomforest_pca_pipeline.ipynb`: Notebook com árvores de decisão e random forest.
 *   `5_decisiontree_randomforest_somente_15.ipynb`: Notebook com árvores de decisão e random forest para apenas 15 feactures segundo Gini.
-*   `6_Pipelines_comentado.ipynb`: Notebook dedicado à construção, treinamento e avaliação de **pipelines de classificadores individuais**.
-*   `7_Ensembles_comentado.ipynb`: Notebook focado na implementação e avaliação de **modelos de ensemble**, utilizando os melhores classificadores individuais como base.
+*   `6_Pipelines.ipynb`: Notebook dedicado à construção, treinamento e avaliação de **pipelines de classificadores individuais**.
+*   `7_Ensembles.ipynb`: Notebook focado na implementação e avaliação de **modelos de ensemble**, utilizando os melhores classificadores individuais como base.
 
 ## Metodologia Geral Aplicada
 
