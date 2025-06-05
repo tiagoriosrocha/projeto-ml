@@ -229,3 +229,112 @@ class SelectiveInteraction(BaseEstimator, TransformerMixin):
         X_new = pd.concat([X, pd.DataFrame(new_features, index=X.index)], axis=1)
 
         return X_new
+
+
+class BytecodeCharacterAggregator(BaseEstimator, TransformerMixin):
+    def __init__(self, categories_map, drop_original=True):
+        self.categories_map = categories_map
+        self.drop_original = drop_original
+        self.prefixes = ['Weight bytecode_character_', 'bytecode_character_']
+        self._feature_names_out_cache = None
+        self._original_cols_processed_during_fit = {} # To store cols identified in fit
+
+    def fit(self, X, y=None):
+        if not isinstance(X, pd.DataFrame):
+            X_df = pd.DataFrame(X)
+        else:
+            X_df = X
+        self.feature_names_in_ = list(X_df.columns)
+        self._original_cols_processed_during_fit = {prefix: set() for prefix in self.prefixes}
+
+        for prefix in self.prefixes:
+            for cat_name, char_suffixes_in_cat in self.categories_map.items():
+                for suffix in char_suffixes_in_cat:
+                    col_name = f'{prefix}{suffix}'
+                    if col_name in self.feature_names_in_:
+                        self._original_cols_processed_during_fit[prefix].add(col_name)
+        return self
+
+    def transform(self, X):
+        if not isinstance(X, pd.DataFrame):
+            # Try to use feature_names_in_ if available from fit
+            columns = getattr(self, 'feature_names_in_', None)
+            X_transformed = pd.DataFrame(X, columns=columns)
+        else:
+            X_transformed = X.copy()
+
+        self._aggregated_feature_names_created_this_transform = []
+        original_cols_to_drop_this_transform = set()
+
+        for prefix in self.prefixes:
+            # Determine the output feature name prefix (AggBytecodeWeight or AggBytecodeCount)
+            agg_feature_prefix = ''
+            if prefix == 'Weight bytecode_character_':
+                agg_feature_prefix = 'AggBytecodeWeight'
+            elif prefix == 'bytecode_character_':
+                agg_feature_prefix = 'AggBytecodeCount'
+            else:
+                continue
+
+            for cat_name, char_suffixes_in_cat in self.categories_map.items():
+                current_cat_char_cols_present = []
+                for suffix in char_suffixes_in_cat:
+                    col_name = f'{prefix}{suffix}'
+                    if col_name in X_transformed.columns:
+                        current_cat_char_cols_present.append(col_name)
+                        original_cols_to_drop_this_transform.add(col_name)
+                
+                if current_cat_char_cols_present:
+                    new_agg_col_name = f'{agg_feature_prefix}_{cat_name}'
+                    X_transformed[new_agg_col_name] = X_transformed[current_cat_char_cols_present].sum(axis=1)
+                    self._aggregated_feature_names_created_this_transform.append(new_agg_col_name)
+        
+        if self.drop_original:
+            cols_to_drop = [col for col in original_cols_to_drop_this_transform if col in X_transformed.columns]
+            X_transformed = X_transformed.drop(columns=cols_to_drop, errors='ignore')
+            
+        self._feature_names_out_cache = list(X_transformed.columns)
+        return X_transformed
+
+    def get_feature_names_out(self, input_features=None):
+        if self._feature_names_out_cache is not None:
+            return self._feature_names_out_cache
+        
+        if input_features is None:
+            if not hasattr(self, 'feature_names_in_'):
+                 raise AttributeError(
+                    f"{self.__class__.__name__} has not been fitted. "
+                    "Call 'fit' or provide input_features to get_feature_names_out."
+                )
+            input_features = self.feature_names_in_
+        
+        output_features = list(input_features)
+        
+        # Determine which original character columns would be dropped
+        original_cols_that_would_be_dropped = set()
+        if self.drop_original:
+            for prefix in self.prefixes:
+                    for suffix in char_suffixes_in_cat:
+                        col_name = f'{prefix}{suffix}'
+                        if col_name in input_features:
+                            original_cols_that_would_be_dropped.add(col_name)
+            
+            output_features = [col for col in output_features if col not in original_cols_that_would_be_dropped]
+        
+        for prefix in self.prefixes:
+            agg_feature_prefix = ''
+            if prefix == 'Weight bytecode_character_': agg_feature_prefix = 'AggBytecodeWeight'
+            elif prefix == 'bytecode_character_': agg_feature_prefix = 'AggBytecodeCount'
+            else: continue
+
+            for cat_name in self.categories_map.keys():
+                has_constituent_char = False
+                for suffix in self.categories_map[cat_name]:
+                    if f'{prefix}{suffix}' in input_features:
+                        has_constituent_char = True
+                        break
+                if has_constituent_char:
+                    output_features.append(f'{agg_feature_prefix}_{cat_name}')
+        
+        return sorted(list(set(output_features)))
+
