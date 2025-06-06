@@ -2,13 +2,19 @@
 
 Este projeto tem como objetivo aplicar, comparar e combinar diversas técnicas de Machine Learning para a classificação de contratos inteligentes. As features são extraídas por análise estática do código fonte. Um foco particular é a maximização da métrica de **recall** para a classe de interesse, visando identificar corretamente o maior número possível de contratos relevantes dessa classe.
 
+## Contexto do Trabalho
+
+Este trabalho foi realizado no escopo da disciplina `CMP263 - Aprendizagem de Máquina`.
+Período: 2025-1.
+Professora: Mariana Recamonde Mendoza
+Alunos: Tiago Rios da Rocha, Tobias de Abreu Kuse
+
 ## Dados Fonte
 
 Os dados utilizados são provenientes de um dataset de contratos inteligentes, onde as features representam métricas quantitativas obtidas por análise estática.
 
 *   **Arquivo de Dados:** `smart-contract-dataset.csv`
-*   **Descrição Detalhada das Features:** Consulte o arquivo `Unveiling vulnerable smart contracts: Toward profiling vulnerable smart
-contracts using genetic algorithm and generating benchmark dataset.pdf`  na pasta do projeto para uma descrição completa das features e da origem do dataset.
+*   **Descrição Detalhada das Features:** Consulte o arquivo `Unveiling vulnerable smart contracts: Toward profiling vulnerable smart contracts using genetic algorithm and generating benchmark dataset.pdf`  na pasta do projeto para uma descrição completa das features e da origem do dataset.
 
 ## Estrutura do Projeto
 
@@ -24,6 +30,9 @@ contracts using genetic algorithm and generating benchmark dataset.pdf`: Documen
 *   `5_decisiontree_randomforest_somente_15.ipynb`: Notebook com árvores de decisão e random forest para apenas 15 feactures segundo Gini.
 *   `6_Pipelines.ipynb`: Notebook dedicado à construção, treinamento e avaliação de **pipelines de classificadores individuais**.
 *   `7_Ensembles.ipynb`: Notebook focado na implementação e avaliação de **modelos de ensemble**, utilizando os melhores classificadores individuais como base.
+*   `8_modelo_final_e_interpretabilidade.ipynb`: Notebook com a implementação do melhor modelo e apresentando informações de interpretabilidade com SHAP e importância de atributos.
+*   `Resultados trabalho machine learning.xlsx`: Planilha com os resultados de todos os modelos.
+
 
 ## Metodologia Geral Aplicada
 
