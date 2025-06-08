@@ -1,3 +1,32 @@
+###############################################
+# ESTE CÓDIGO FOI GERADO COM AUXÍLIO DO CHATGPT.
+###############################################
+
+"""
+ Transformadores implementados:
+
+ 1. FlagSparseFeatures
+    - Cria colunas binárias (flags de presença) para variáveis numéricas com alta esparsidade.
+    - Útil para identificar a presença/ausência de valores em colunas com muitos zeros.
+
+ 2. OpcodeAggregator
+    - Agrupa colunas de pesos de opcodes em categorias definidas pelo usuário.
+    - Pode descartar as colunas originais após a agregação.
+
+ 3. TreeFeatureSelector
+    - Usa um DecisionTreeClassifier para selecionar as k variáveis mais importantes.
+    - Retorna apenas as colunas selecionadas com base em importância de atributo.
+
+ 4. SelectiveInteraction
+    - Cria interações multiplicativas entre pares de variáveis com correlações opostas em relação à variável alvo binária.
+    - Usa correlação ponto-bisserial para selecionar pares de variáveis.
+
+ 5. BytecodeCharacterAggregator
+    - Agrupa colunas relacionadas a características de bytecode (tanto contagens quanto pesos), conforme categorias fornecidas.
+    - Pode remover as colunas originais após a agregação.
+"""
+
+
 import pandas as pd
 import numpy as np
 from sklearn.base import BaseEstimator, TransformerMixin
@@ -337,4 +366,3 @@ class BytecodeCharacterAggregator(BaseEstimator, TransformerMixin):
                     output_features.append(f'{agg_feature_prefix}_{cat_name}')
         
         return sorted(list(set(output_features)))
-
